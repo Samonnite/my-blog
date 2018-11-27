@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
-import Layout from '../views/Layout';
+import Layout from '../views/layout';
 import Login from '../views/Login/Login';
 
 export default class RouterWrap extends Component {
