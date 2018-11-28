@@ -3,8 +3,8 @@ import logo from '../../assets/logo.png';
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import {Layout, Icon, Menu, Row, Col, Button} from 'antd';
-// import Register from '../register/register';
-// import Login from '../login/login';
+import Register from '../register/register';
+import Login from '../login/login';
 
 const {Header} = Layout;
 const SubMenu = Menu.SubMenu;
@@ -22,7 +22,41 @@ class Nav extends Component {
         };
     }
 
+    componentDidMount() {
+        this.initMenu();
+    }
+
+    initMenu() {
+        let name = this.props.pathname;
+        let key = '1';
+        if (name === '/home') {
+            key = '1'
+        } else if (name === '/hot') {
+            key = '2';
+        } else if (name === '/timeLine') {
+            key = '3';
+        } else if (name === '/message') {
+            key = '4';
+        } else if (name === '/about') {
+            key = '5';
+        }
+
+        this.setState({
+            menuCurrent: key
+        });
+    }
+
+    handleMenu = e => {
+        this.setState({
+            menuCurrent: e.key
+        });
+    };
+
     render() {
+        let userInfo = '';
+        if (window.sessionStorage.userInfo) {
+            userInfo = JSON.parse(window.sessionStorage.userInfo);
+        }
         return (
             <div className="left">
                 <Header
@@ -83,8 +117,51 @@ class Nav extends Component {
                                 </Menu.Item>
                             </Menu>
                         </Col>
-                    </Row>
+                        <Col style={{textAlign: 'right', width: '300px', float: 'left'}}>
+                            {userInfo ? (
+                                <Menu
+                                    onClick={this.handleLogout}
+                                    style={{width: 220, lineHeight: '64px', display: 'inline-block'}}
+                                    selectedKeys={[this.state.current]}
+                                    mode="horizontal"
+                                >
+                                    <SubMenu
+                                        title={
+                                            <span className="submenu-title-wrapper">
+                                                <Icon type="user"/>{userInfo.name}
+                                            </span>
+                                        }
+                                    >
+                                        <MenuItemGroup>
+                                            <Menu.Item key="logout">退出</Menu.Item>
+                                        </MenuItemGroup>
+                                    </SubMenu>
+                                </Menu>
+                            ) : (
+                                <div>
+                                    <Button
+                                        type="primary"
+                                        icon="login"
+                                        style={{marginRight: '15px'}}
+                                        onClick={this.showLoginModal}
+                                    >
+                                        登录
+                                    </Button>
 
+                                    <Button
+                                        type="danger"
+                                        icon="logout"
+                                        style={{marginRight: '15px'}}
+                                        onClick={this.showRegisterModal}
+                                    >
+                                        注册
+                                    </Button>
+                                </div>
+                            )}
+                        </Col>
+                    </Row>
+                    <Login visible={this.state.login} handleCancel={this.handleLoginCancel}/>
+                    <Register visible={this.state.register} handleCancel={this.handleRegisterCancel}/>
                 </Header>
             </div>
         )
